@@ -61,12 +61,6 @@ image_c1 = cv2.resize(image_c,(100,100))
 image_d = cv2.imread('train/02b1c50fb7315423a664f3ce68c94e30.jpg',0)
 
 
-# SIFT or SURF
-# img = sift_detect(image_a, image_b)
-#
-# plt.imshow(img)
-# plt.show()
-
 img2 = sift_detect(image_a, image_b)
 
 plt.imshow(img2)

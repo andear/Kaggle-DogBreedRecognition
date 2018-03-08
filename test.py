@@ -1,27 +1,40 @@
-# import cv2
-# from matplotlib import pyplot as plt
-# import numpy as np
-# from scipy.cluster.vq import *
+import cv2
+from matplotlib import pyplot as plt
+import numpy as np
+from scipy.cluster.vq import *
+from findFeatures import train_findFeatures
+
+
+
+# image_a = cv2.imread("data_gen/train/basset/4ff1a1c62acccfbb0bb1a6ecb4f29682.jpg",0)
+# image_b = cv2.imread('data_gen/train/basset/8282ea64f812be023f8ad901385d66ba.jpg',0)
 #
+# images = [image_a,image_b]
+# features = train_findFeatures(images)
+# print("features",features)
+
+
+
+
 # img = cv2.imread("train/0a1b0b7df2918d543347050ad8b16051.jpg",cv2.IMREAD_GRAYSCALE)
 # cv2.imshow("image",img)
 # print("image",img.shape)
 # print(type(img))
 # print("==========")
 # img_1 = cv2.resize(img,(200,200))
-# # print(img_1.shape)
-# # cv2.imshow("image_1",img_1)
-# # cv2.waitKey(3000)
-# # cv2.destroyAllWindows()
-#
+# print(img_1.shape)
+# cv2.imshow("image_1",img_1)
+# cv2.waitKey(3000)
+# cv2.destroyAllWindows()
 # kp1, des1 = cv2.xfeatures2d.SURF_create().detectAndCompute(img_1,None);
 #
 #
-# # print("kp1:", type(kp1))
-# # print("==========")
-# # print(np.array(kp1).shape)
-# # print("==========")
-# # print(kp1)
+# print("kp1:", type(kp1))
+# print("==========")
+# print(len(kp1))
+# print(np.array(kp1).shape)
+# print("==========")
+# print(kp1)
 #
 # print("des1",type(des1))
 # print("==========")
@@ -105,42 +118,18 @@
 
 # ========================================
 
-# import pandas as pd
-# from tqdm import tqdm
-# import numpy as np
-#
-# df_train = pd.read_csv("./labels.csv")
-# print(df_train.head(10))
-#
-# classes = []
-#
-# print("Loading Training Image...")
-# for f, breed in tqdm(df_train.values):
-#     classes.append(breed)
-#
-#
-# print("==========")
-# print("classes", type(classes))
-# print("==========")
-# print(np.array(classes).shape)
-# print("==========")
-# print(classes)
-
-
-# ========================================
+import pandas as pd
+from creatSubmition import creatSubmition
+from tqdm import tqdm
 import numpy as np
 
-a = np.array([1,2,3])
-b = np.array([2,2,3])
-c = np.array([3,2,3])
-d = np.array([4,2,3])
-temp1 = np.vstack((a,b))
-temp2 = np.vstack((c,d))
-result1 = np.vstack((temp1,temp2))
+df_train = pd.read_csv("./labels.csv")
 
-print(result1)
+df_predict = pd.read_csv("./test_submission.csv")
+df_test = pd.read_csv('./sample_submission.csv')
 
-print("=========")
-temp3 = np.vstack((temp1,c))
-result2 = np.vstack((temp3,d))
-print(result2)
+creatSubmition(df_predict, df_train, df_test, "1122.csv")
+
+
+
+

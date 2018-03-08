@@ -40,7 +40,7 @@ def read_training_images(img_width = 250, img_height = 250):
 
     print("Loading Training Image...")
     for f, breed in tqdm(df_train.values):
-        img = cv2.imread('./train/{}.jpg'.format(f))
+        img = cv2.imread('./train/{}.jpg'.format(f),cv2.IMREAD_GRAYSCALE)
         classes.append(breed)
         images.append(cv2.resize(img, (img_width, img_height)))
     return (images,classes,df_train)
@@ -52,7 +52,7 @@ def read_testing_images(img_width = 250, img_height = 250):
     images = []
     print("Loading Testing Image...")
     for f in tqdm(df_test['id'].values):
-        img = cv2.imread('./test/{}.jpg'.format(f))
+        img = cv2.imread('./test/{}.jpg'.format(f),cv2.IMREAD_GRAYSCALE)
         images.append(cv2.resize(img, (img_width, img_height)))
     return (images,df_test)
 
