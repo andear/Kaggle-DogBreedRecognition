@@ -2,7 +2,8 @@ import cv2
 import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from random import randint
+# from imagePreprocess import pca_rebuild_img
+
 
 
 def plot_images(images, classes,img_width, img_height):
@@ -40,7 +41,10 @@ def read_training_images(img_width = 250, img_height = 250):
 
     print("Loading Training Image...")
     for f, breed in tqdm(df_train.values):
-        img = cv2.imread('./train/{}.jpg'.format(f),cv2.IMREAD_GRAYSCALE)
+        img = cv2.imread('./train/{}.jpg'.format(f), cv2.IMREAD_GRAYSCALE)
+        img = cv2.GaussianBlur(img, (3, 3), 0)
+        # img = pca_rebuild_img(img,0.8)
+        # img = cv2.imread('./train/{}.jpg'.format(f))
         classes.append(breed)
         images.append(cv2.resize(img, (img_width, img_height)))
     return (images,classes,df_train)
@@ -52,7 +56,10 @@ def read_testing_images(img_width = 250, img_height = 250):
     images = []
     print("Loading Testing Image...")
     for f in tqdm(df_test['id'].values):
-        img = cv2.imread('./test/{}.jpg'.format(f),cv2.IMREAD_GRAYSCALE)
+        img = cv2.imread('./test/{}.jpg'.format(f), cv2.IMREAD_GRAYSCALE)
+        # img = cv2.imread('./test/{}.jpg'.format(f))
+        img = cv2.GaussianBlur(img, (3, 3), 0)
+        # img = pca_rebuild_img(img, 0.8)
         images.append(cv2.resize(img, (img_width, img_height)))
     return (images,df_test)
 

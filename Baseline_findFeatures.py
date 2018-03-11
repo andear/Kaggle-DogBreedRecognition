@@ -3,6 +3,7 @@ import numpy as np
 from scipy.cluster.vq import *
 from tqdm import tqdm
 import time
+from sklearn import preprocessing
 
 
 def train_findFeatures(images,numWords = 1000):
@@ -35,9 +36,12 @@ def train_findFeatures(images,numWords = 1000):
     descriptors = my_descriptors
 
     # Perform k-means clustering
-    print ("\nTraining: Start k-means: %d words, %d key points" %(numWords, descriptors.shape[0]))
+    localtime = time.asctime(time.localtime(time.time()))
+    print("\ncurrent time :", localtime)
+
+    print("\nTraining: Start k-means: %d words, %d key points" % (numWords, descriptors.shape[0]))
     kmstart = time.clock()
-    voc, variance = kmeans(descriptors, numWords, 1)
+    voc, variance = kmeans(descriptors, numWords, 1, thresh = 1e-2)
     print("Time for k means",time.clock()-kmstart,"s")
     # Calculate the histogram of features
     im_features = np.zeros((len(images), numWords), "float32")
@@ -47,10 +51,19 @@ def train_findFeatures(images,numWords = 1000):
         words, distance = vq(des_list[i],voc)
         for w in words:
             im_features[i][w] += 1
-    return (im_features,voc)
+
+    nbr_occurences = np.sum((im_features > 0) * 1, axis=0)
+
+    idf = np.array(np.log((1.0 * len(images) + 1) / (1.0 * nbr_occurences + 1)), 'float32')
+
+    a = 1
+    im_features = im_features * idf * a
+    # im_features = preprocessing.normalize(im_features, norm='l2')
+
+    return (im_features,voc,idf)
 
 
-def test_findFeatures(images,voc, numWords = 1000):
+def test_findFeatures(images,voc, idf, numWords = 1000):
     des_list = []
     print("\nTesting: Applying SIFT ...")
     for image in tqdm(images):
@@ -66,4 +79,7 @@ def test_findFeatures(images,voc, numWords = 1000):
         words, distance = vq(des_list[i],voc)
         for w in words:
             im_features[i][w] += 1
-    return im_features
+
+    test_features = im_features * idf
+    # test_features = preprocessing.normalize(test_features, norm='l2')
+    return test_features

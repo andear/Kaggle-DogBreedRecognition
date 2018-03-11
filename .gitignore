@@ -1,3 +1,5 @@
+tensorflow_vgg
+*.npy
 *.jpg
 .idea
 .DS_Store

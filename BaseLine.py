@@ -1,14 +1,19 @@
-from findFeatures import train_findFeatures, test_findFeatures
-from LoadImage import read_training_images, read_testing_images
+from Baseline_findFeatures import train_findFeatures, test_findFeatures
+from Baseline_LoadImage import read_training_images, read_testing_images
 from creatSubmition import creatSubmition
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import time
+from sklearn import svm
 
 start = time.clock()
-(images,classes,df_train) = read_training_images(img_width = 200, img_height = 200)
+width = 200
+height = 200
+numberOfWords = 400
+(images,classes,df_train) = read_training_images(img_width = width, img_height = height)
 
-(training_features,voc) = train_findFeatures(images,numWords = 2000)
+
+(training_features,voc,idf) = train_findFeatures(images,numWords = numberOfWords)
 
 print("features:",type(training_features))
 print("==========")
@@ -16,7 +21,7 @@ print("features.shape:",training_features.shape)
 print("==========")
 
 
-rf = RandomForestClassifier(n_estimators=500,
+rf = RandomForestClassifier(n_estimators=1000,
                  criterion="gini",
                  max_depth=None,
                  min_samples_split=2,
@@ -33,6 +38,7 @@ rf = RandomForestClassifier(n_estimators=500,
                  verbose=0,
                  warm_start=False,
                  class_weight=None)
+# rf = svm.SVC()
 
 RF_train_start = time.clock()
 print("Time for extracting feature:", RF_train_start - start)
@@ -44,16 +50,28 @@ print("\ntraining done ! Training Time:", RF_train_end - RF_train_start)
 
 
 
-(test_images,df_test) = read_testing_images(img_width = 200, img_height = 200)
+(test_images,df_test) = read_testing_images(img_width = width, img_height = height)
 
-testing_features = test_findFeatures(test_images,voc,numWords = 2000)
+
+testing_features = test_findFeatures(test_images,voc,idf,numWords = numberOfWords)
+
 print("\nStart predict...")
+RF_test_start = time.clock()
 predict = rf.predict(testing_features)
-print("\npredict done!")
+print("\npredict done! predict Time:", time.clock() - RF_test_start)
 
 df_predict = pd.DataFrame(predict)
-creatSubmition(df_predict,df_train,df_test,"baseline.csv")
+
+df_predict.to_csv("predict.csv")
+
+# fileName = "baseline_k=" + numberOfWords + "_" + width + "_" +height + ".csv"
 
 end = time.clock()
 print('Total time:', end - start)
+
+
+fileName = "baseline.csv"
+creatSubmition(df_predict, df_train, df_test, fileName=fileName)
+
+
 

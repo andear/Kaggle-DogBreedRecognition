@@ -2,30 +2,27 @@ import cv2
 from matplotlib import pyplot as plt
 import numpy as np
 from scipy.cluster.vq import *
-from findFeatures import train_findFeatures
-
-
-
-# image_a = cv2.imread("data_gen/train/basset/4ff1a1c62acccfbb0bb1a6ecb4f29682.jpg",0)
-# image_b = cv2.imread('data_gen/train/basset/8282ea64f812be023f8ad901385d66ba.jpg',0)
+from Baseline_findFeatures import train_findFeatures
 #
-# images = [image_a,image_b]
-# features = train_findFeatures(images)
-# print("features",features)
-
-
-
-
+#
+#
+# # image_a = cv2.imread("data_gen/train/basset/4ff1a1c62acccfbb0bb1a6ecb4f29682.jpg",0)
+# # image_b = cv2.imread('data_gen/train/basset/8282ea64f812be023f8ad901385d66ba.jpg',0)
+# #
+# # images = [image_a,image_b]
+# # features = train_findFeatures(images)
+# # print("features",features)
+#
+#
+#
+#
 # img = cv2.imread("train/0a1b0b7df2918d543347050ad8b16051.jpg",cv2.IMREAD_GRAYSCALE)
-# cv2.imshow("image",img)
-# print("image",img.shape)
-# print(type(img))
-# print("==========")
-# img_1 = cv2.resize(img,(200,200))
-# print(img_1.shape)
+#
+# img_1 = cv2.resize(img,(400,400))
+# # print(img_1.shape)
 # cv2.imshow("image_1",img_1)
-# cv2.waitKey(3000)
-# cv2.destroyAllWindows()
+# cv2.waitKey(0)
+# # cv2.destroyAllWindows()
 # kp1, des1 = cv2.xfeatures2d.SURF_create().detectAndCompute(img_1,None);
 #
 #
@@ -82,9 +79,7 @@ from findFeatures import train_findFeatures
 # y_train1 = []
 # for i in range(0,len(y_train)):
 #     y_train1.append(dic[y_train[i]])
-#
-# print(y_train1)
-# print("=======================================")
+
 # rf = RandomForestClassifier(n_estimators=10,
 #                  criterion="gini",
 #                  max_depth=None,
@@ -118,18 +113,27 @@ from findFeatures import train_findFeatures
 
 # ========================================
 
-import pandas as pd
-from creatSubmition import creatSubmition
-from tqdm import tqdm
-import numpy as np
+# import pandas as pd
+# from creatSubmition import creatSubmition
+# from tqdm import tqdm
+# import numpy as np
+#
+# df_train = pd.read_csv("./labels.csv")
+#
+# df_predict = pd.read_csv("./predict.csv")
+# df_test = pd.read_csv('./sample_submission.csv')
+#
+# fileName = "svm_test.csv"
+# creatSubmition(df_predict, df_train, df_test, fileName)
+#
 
-df_train = pd.read_csv("./labels.csv")
+# ========================================
 
-df_predict = pd.read_csv("./test_submission.csv")
-df_test = pd.read_csv('./sample_submission.csv')
+image_a = cv2.imread("data_gen/train/basset/4ff1a1c62acccfbb0bb1a6ecb4f29682.jpg")
+# image_b = cv2.imread('data_gen/train/basset/8282ea64f812be023f8ad901385d66ba.jpg',0)
 
-creatSubmition(df_predict, df_train, df_test, "1122.csv")
+img = cv2.GaussianBlur(image_a, (7, 7), 0)
 
-
-
-
+cv2.imshow("image_1",image_a)
+cv2.imshow("image_2",img)
+cv2.waitKey(0)

@@ -39,7 +39,7 @@ for clazz in clazzes[:]:
 
 
 # This will split available labeled data to train-validation sets
-train_ratio = 0.7
+train_ratio = 1
 for clazz in clazzes[:]:
     fnames = train_labels[train_labels[:, 1] == clazz][:,0]
     fnames = ['{}.jpg'.format(name) for name in fnames]
