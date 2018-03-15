@@ -61,7 +61,7 @@ predict = rf.predict(testing_features)
 print("\npredict done! predict Time:", time.clock() - RF_test_start)
 
 df_predict = pd.DataFrame(predict)
-
+df_predict.columns = ['predict']
 df_predict.to_csv("predict.csv")
 
 # fileName = "baseline_k=" + numberOfWords + "_" + width + "_" +height + ".csv"

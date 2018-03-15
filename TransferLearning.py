@@ -1,61 +1,66 @@
-import os
 import numpy as np
-import tensorflow as tf
+import pandas as pd
+import time
+from sklearn.ensemble import RandomForestClassifier
+from creatSubmition import creatSubmition
 
-from tensorflow_vgg import vgg16
-from tensorflow_vgg import utils
+start = time.clock()
+
+train_features = np.load("train_features.npy")
+temp = np.load("train_labels.npy")
+labels = np.ndarray.tolist(temp)
+
+test_features = np.load("test_features.npy")
+
+nbr_occurences = np.sum((train_features > 0) * 1, axis=0)
+
+idf = np.array(np.log((1.0 * len(train_features) + 1) / (1.0 * nbr_occurences + 1)), 'float32')
+
+train_features = idf * train_features;
+test_features = idf * test_features
+
+rf = RandomForestClassifier(n_estimators=500,
+                            criterion="gini",
+                            max_depth=None,
+                            min_samples_split=2,
+                            min_samples_leaf=1,
+                            min_weight_fraction_leaf=0.,
+                            # max_features="sqrt",
+                            max_features="auto",
+                            max_leaf_nodes=None,
+                            min_impurity_decrease=0.,
+                            min_impurity_split=None,
+                            bootstrap=True,
+                            oob_score=False,
+                            n_jobs=1,
+                            random_state=None,
+                            verbose=0,
+                            warm_start=False,
+                            class_weight=None)
+
+RF_train_start = time.clock()
+
+print("\nStart training RF...")
+rf.fit(train_features, labels)
+RF_train_end = time.clock()
+print("\ntraining done ! Training Time:", RF_train_end - RF_train_start)
+RF_test_start = time.clock()
+print("\nStart predict...")
+predict = rf.predict(test_features)
+print("\npredict done! predict Time:", time.clock() - RF_test_start)
+#
+df_predict = pd.DataFrame(predict)
+df_predict.to_csv("predict.csv")
+df_predict.columns = ['predict']
+
+df_train = pd.read_csv("./labels.csv")
+df_test = pd.read_csv('./sample_submission.csv')
+
+end = time.clock()
+print('Total time:', end - start)
 
 
-
-
-data_dir = 'data_gen/'
-contents = os.listdir(data_dir)
-classes = [each for each in contents if os.path.isdir(data_dir + each)]
-
-batch_size = 10
-
-codes_list = []
-
-labels = []
-
-batch = []
-
-codes = None
-
-
-with tf.Session() as sess:
-    # Construct VGG16 object
-    vgg = vgg16.Vgg16()
-    input_ = tf.placeholder(tf.float32, [None, 224, 224, 3])
-    with tf.name_scope("content_vgg"):
-        # build VGG16 model
-        vgg.build(input_)
-
-    # for every kind of flower, use VGG16 to calculate its feature
-    for each in classes:
-        print("Starting {} images".format(each))
-        class_path = data_dir + each
-        files = os.listdir(class_path)
-        for ii, file in enumerate(files, 1):
-            # 载入图片并放入batch数组中
-            img = utils.load_image(os.path.join(class_path, file))
-            batch.append(img.reshape((1, 224, 224, 3)))
-            labels.append(each)
-
-            # 如果图片数量到了batch_size则开始具体的运算
-            if ii % batch_size == 0 or ii == len(files):
-                images = np.concatenate(batch)
-
-                feed_dict = {input_: images}
-                # 计算特征值
-                codes_batch = sess.run(vgg.relu6, feed_dict=feed_dict)
-
-                # 将结果放入到codes数组中
-                if codes is None:
-                    codes = codes_batch
-                else:
-                    codes = np.concatenate((codes, codes_batch))
-
-                # 清空数组准备下一个batch的计算
-                batch = []
-                print('{} images processed'.format(ii))
+fileName = "transfer_learning.csv"
+creatSubmition(df_predict, df_train, df_test, fileName=fileName)
+# acc = cal_Accuracy(predict,test_classes)
+# print("accuracy is", acc)
